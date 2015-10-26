@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body >
+    <div style="background-color:#3f5872;color:white;height:60px;width:100%">
+        <h3 style="text-align:center;padding-top:25px;font-weight:600;height:10px;">Languager</h3>
+    </div>
+    <div style="text-align:center;margin-top:200px" class="main">
+        <div>
+            <label>Enter the word here: </label>
+            <input class="enterword" />
+        </div>
+        <div style="margin-top:20px">
+            <label>Choose the language to translate to:</label>
+            <select class="targetlanguage">
+                <option value="ar">Arabic</option>
+                <option value="hr">Croatia</option>
+                <option value="cs">Czech</option>
+                <option value="da">Danish</option>
+                <option value="nl">Dutch</option>
+                <option value="et">Estonia</option>
+                <option value="fi">Finnish</option>
+                <option value="fr">French</option>
+                <option value="el">Greek</option>
+                <option value="hi">Hindi</option>
+                <option value="ru">Russian</option>
+                <option value="es">Spanish</option>
+                <option value="sv">Swedish</option>
+                <option value="th">Thai</option>
+                <option value="tr">Turkish</option>
+                <option value="uk">Ukranian</option>
+                <option value="ur">Urdu</option>
+                <option value="vi">Vietnemese</option>
+                
+            </select>
+        </div>
+
+
+        <div style="margin-top:20px">
+            <button class="translate">Translate</button>
+        </div>
+
+        <div style="margin-top:20px;text-align:center">            
+            <h1 class="result" style="color: #34495e;"></h1>
+        </div>
+    </div>
+
+
+
+
+    <script>
+        var g_token = '';
+        $.ajax({
+            url: 'tester.php',
+            type: "GET",
+            cache: true,
+            dataType: "text",
+            success: function (data) {
+                //alert(data);
+                g_token = data;
+            },
+            error: function () {
+                alert("not successful");
+            }
+
+        });
+
+        $(".translate").click(function () {
+           
+       
+
+            var from = "en", to = $(this).parents(".main").find(".targetlanguage").val(), text = $(this).parents(".main").find(".enterword").val();
+
+            var s = document.createElement("script");
+            s.src = "http://api.microsofttranslator.com/V2/Ajax.svc/Translate" +
+                "?appId=Bearer " + encodeURIComponent(g_token) +
+                "&from=" + encodeURIComponent(from) +
+                "&to=" + encodeURIComponent(to) +
+                "&text=" + encodeURIComponent(text) +
+                "&oncomplete=mycallback";
+            document.body.appendChild(s);
+        });
+
+        function mycallback(response) {
+            $("body").find(".initial").text($("body").find(".enterword").val());
+            $("body").find(".result").text(response);
+        }
+
+    </script>
+</body>
+
+
+</html>
