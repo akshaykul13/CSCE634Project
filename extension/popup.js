@@ -1,13 +1,40 @@
 $(document).ready(function() {
-    // Initialize the on-off extension switch
-    chrome.storage.sync.get(['languagerEnabled'], function(data) {
-         $('#myonoffswitch').prop('checked', data.languagerEnabled);       
+    // Initialize the options
+    chrome.storage.sync.get(['languagerEnabled', 'wordReplacementEnabled', 'wordReplacementQuizLevel'], function(data) {
+        $('#extensionEnabled').prop('checked', data.languagerEnabled);  
+        $('#wordReplacementCheckbox').prop('checked', data.wordReplacementEnabled);       
+        if(data.wordReplacementEnabled) {
+            $('#wordReplacementLevelDiv').show();
+            $('#wordReplacementLevel').val(data.wordReplacementQuizLevel);
+        } else {
+            $('#wordReplacementLevelDiv').hide();
+        }
     });    
 
-    $('#myonoffswitch').click(function() {
+
+    $('#wordReplacementCheckbox').click(function() {
+        chrome.storage.sync.get(['languagerEnabled', 'wordReplacementEnabled'], function(data) {
+            if(data.languagerEnabled) {
+                var wordReplacementQuiz = $('#wordReplacementCheckbox').prop('checked');
+                console.log(wordReplacementQuiz);
+                chrome.storage.sync.set({'wordReplacementEnabled': wordReplacementQuiz});
+                if(wordReplacementQuiz) {
+                    $('#wordReplacementLevelDiv').show();
+                } else {
+                    $('#wordReplacementLevelDiv').hide();
+                }
+            }
+        });                
+    });
+
+    $('#extensionEnabled').click(function() {
         chrome.storage.sync.get(['languagerEnabled'], function(data) {
             chrome.storage.sync.set({'languagerEnabled': !data.languagerEnabled});       
         });        
         chrome.runtime.sendMessage({msgId: "toggleExtension"});
+    });
+
+    $('#wordReplacementLevel').change(function() {        
+        chrome.storage.sync.set({'wordReplacementQuizLevel': $('#wordReplacementLevel').val()});
     });
 });

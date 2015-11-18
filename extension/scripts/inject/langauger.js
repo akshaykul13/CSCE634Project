@@ -53,16 +53,14 @@ Langauger.boot = function(){
     if (!Langauger.running) {
         Langauger.running = true;
         Langauger.init();
-        Langauger.wordReplacementQuiz(2);
-        //Langauger.showMessage('Langauger is activated. Select a phrase to translate it. Alt-click a link to translate its text.');
+        chrome.storage.sync.get(['languagerEnabled', 'wordReplacementEnabled', 'wordReplacementQuizLevel'], function(data) {
+            if(data.languagerEnabled && data.wordReplacementEnabled) {
+                Langauger.wordReplacementQuiz(2);
+            }
+        });        
         window.getSelection().removeAllRanges()
     }
-  //Langauger.processSelection();
 }
-
-/*document.addEventListener('DOMContentLoaded', function() {
-	Langauger.boot();
-});	*/
 
 Langauger.setConfig = function(config){
     var defaultConfig = {

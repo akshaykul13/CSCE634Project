@@ -1,8 +1,16 @@
+body {
+    width: 400px;
+}
+
+#wordReplacementCheckbox {
+    width: 25px;
+}
+
 /*
  * On Off Switch (https://proto.io/freebies/onoff/)
  */
 .onoffswitch {
-    position: relative; width: 90px;
+    position: relative; width: 75px;
     -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
 }
 .onoffswitch-checkbox {
@@ -17,7 +25,7 @@
     transition: margin 0.3s ease-in 0s;
 }
 .onoffswitch-inner:before, .onoffswitch-inner:after {
-    display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
+    display: block; float: left; width: 50%; height: 25px; padding: 0; line-height: 25px;
     font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
     box-sizing: border-box;
 }
@@ -33,12 +41,14 @@
     text-align: right;
 }
 .onoffswitch-switch {
-    display: block; width: 18px; margin: 6px;
+    display: block; width: 18px; margin: 3.5px;
     background: #FFFFFF;
     position: absolute; top: 0; bottom: 0;
-    right: 56px;
+    right: 45px;
     border: 2px solid #999999; border-radius: 20px;
     transition: all 0.3s ease-in 0s; 
+    height: 22px;
+    width: 22px;
 }
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
     margin-left: 0;

@@ -3,19 +3,45 @@
 <html>
     <head>
         <title>Getting Started Extension's Popup</title>
+        <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
         <link href="css/popup.css" rel="stylesheet" type="text/css">
         <script src="scripts/inject/jquery.min.js"></script>
         <script src="scripts/store.js"></script>
         <script src="popup.js"></script>
     </head>
     <body>
-        <div class="onoffswitch">
-            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch">
-            <label class="onoffswitch-label" for="myonoffswitch">
-                <span class="onoffswitch-inner"></span>
-                <span class="onoffswitch-switch"></span>
-            </label>
-        </div>
+        <form class="form-horizontal">
+            <fieldset>
+                <div style="margin:10px;">
+                    <label for="extensionEnabled" class="col-lg-2 control-label">Enabled</label>
+                    <div class="onoffswitch" style="float:right;">
+                        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="extensionEnabled">
+                        <label class="onoffswitch-label" for="extensionEnabled">
+                            <span class="onoffswitch-inner"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                </div>
+                <div style="margin:10px;">
+                    <label for="wordReplacementCheckbox" class="col-lg-2 control-label">Enable Word Replacement Quiz</label>
+                    <div style="float:right;" >
+                        <input type="checkbox" id="wordReplacementCheckbox">
+                    </div>
+                </div>
+                <div id="wordReplacementLevelDiv" style="margin:10px;">
+                    <label for="wordReplacementLevel" class="col-lg-2 control-label">Word Replacement Quiz Level</label>
+                    <div style="float:right;width:100px;">        
+                        <select class="form-control" id="wordReplacementLevel" style="height:25px;">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
     </body>
 </html>
 
