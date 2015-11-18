@@ -275,7 +275,7 @@ Langauger.engines.googleTranslateFree = function(sourceText){
                 Langauger.config.target = 'es';
                 break;
         }
-    
+        console.log('Translating to ' + Langauger.config.target);
         jQuery.ajax({
             url:'https://translate.google.com/translate_a/single',
             type: 'GET',

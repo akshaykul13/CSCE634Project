@@ -101,15 +101,41 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     // Try to play the text (note that there's a 100 char limit; should
     // chunk on sentences.
     var text = encodeURIComponent(request.text);
+    var targetLang = getCodeForVocalize(request.targetLang);
     var url = 'https://translate.google.com/translate_tts?ie=UTF-8&tl='
             + settings.get('targetLang')
             + '&total=1&idx=0&textlen=77&client=t&prev=input&q='
             + text;
     // Voice RSS API
-    var url1 = 'http://api.voicerss.org/?key=6e069bbaccb64cedac38c4b63c325dd4&src=' + text + '&hl=es-es'
+    var url1 = 'http://api.voicerss.org/?key=6e069bbaccb64cedac38c4b63c325dd4&src=' + text + '&hl=' + targetLang + '&r=-5';
     console.log("vocalizing", url1);
     ChromeLangauger.play(url1);
 });
+
+function getCodeForVocalize(lang) {
+    var code;
+    switch(lang) {
+        case 'Chinese':
+            code = 'zh-cn';
+            break;
+        case 'French':
+            code = 'fr-fr';
+            break;
+        case 'de':
+            code = 'de-de';
+            break;
+        case 'Russian':
+            code = 'ru-ru';
+            break;
+        case 'es':
+            code = 'es-es';
+            break;
+        default:
+            code = 'es-es';
+            break;
+    }
+    return code;
+}
 
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {

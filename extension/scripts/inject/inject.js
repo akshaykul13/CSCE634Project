@@ -32,7 +32,7 @@ function makeConfig(config){
         if (Langauger.config.vocalize) {
             console.log('sending message vocalize');
             // vocalize must be run from background.js
-            chrome.runtime.sendMessage({msgId: "vocalize", text: translation});
+            chrome.runtime.sendMessage({msgId: "vocalize", text: translation, targetLang: Langauger.config.target});
         }
     }
     var ret = {
