@@ -24,6 +24,7 @@ $(document).ready(function() {
 
     $('#targetLangSelect').change(function() {           
         chrome.storage.sync.set({'langaugerTargetLang': $('#targetLangSelect').val()});
+        chrome.runtime.sendMessage({msgId: "toggleExtension"});
     });
 
     $('#wordReplacementCheckbox').click(function() {

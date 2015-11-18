@@ -14,9 +14,9 @@ ChromeLangauger.capitalize = function(str) {
 };
 
 
-ChromeLangauger.setBadge = function(tabId) {
+ChromeLangauger.setBadge = function(tabId, lang) {
     chrome.browserAction.setBadgeText({
-        text: ChromeLangauger.capitalize(settings.get('targetLang')),
+        text: ChromeLangauger.capitalize(lang),
         tabId: tabId
     });
 }
@@ -42,13 +42,11 @@ ChromeLangauger.activate = function(tab) {
 	chrome.tabs.sendMessage(tab.id, { msgId: "isLangaugerLoaded" }, function(result) {
         // not already loaded
         if (typeof(result) == "undefined") {
-            chrome.storage.sync.get(['languagerEnabled'], function(data) {
+            chrome.storage.sync.get(['languagerEnabled', 'langaugerTargetLang'], function(data) {
                 if(data.languagerEnabled) {
-                    ChromeLangauger.setBadge(tab.id);
+                    ChromeLangauger.setBadge(tab.id, data.langaugerTargetLang.substring(0,2));
                 }
             });
-            console.log(settings.get("vocalize"));
-        	console.log("activated");
 
             var files = ["scripts/inject/jquery.min.js", "scripts/inject/rangy-core.js", "scripts/inject/parser.js", "scripts/inject/langauger.js"];
             for (var i = 0; i < files.length; i++) {
@@ -106,7 +104,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             + settings.get('targetLang')
             + '&total=1&idx=0&textlen=77&client=t&prev=input&q='
             + text;
-    // Voice RSS API
+    // Voice RSS API, r = -5 slows the speed (http://www.voicerss.org/api/documentation.aspx)
     var url1 = 'http://api.voicerss.org/?key=6e069bbaccb64cedac38c4b63c325dd4&src=' + text + '&hl=' + targetLang + '&r=-5';
     console.log("vocalizing", url1);
     ChromeLangauger.play(url1);
@@ -143,9 +141,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.msgId != 'toggleExtension') {
         return;
     }
-    chrome.storage.sync.get(['languagerEnabled'], function(data) {
+    chrome.storage.sync.get(['languagerEnabled', 'langaugerTargetLang'], function(data) {
         if(data.languagerEnabled) {
-            ChromeLangauger.setBadge(currentTabID);
+            ChromeLangauger.setBadge(currentTabID, data.langaugerTargetLang.substring(0,2));
         } else {
             ChromeLangauger.removeBadge(currentTabID);
         }
