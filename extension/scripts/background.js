@@ -1,7 +1,5 @@
 var ChromeLangauger = {};
 
-console.log("here");
-
 var settings = new Store("settings", {
     "sourceLang": "en",
     "targetLang": "fr",
@@ -91,10 +89,21 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     // Try to play the text (note that there's a 100 char limit; should
     // chunk on sentences.
     var text = encodeURIComponent(request.text);
-    var url = 'http://translate.google.com/translate_tts?ie=UTF-8&tl='
+    var url = 'https://translate.google.com/translate_tts?ie=UTF-8&tl='
             + settings.get('targetLang')
             + '&total=1&idx=0&textlen=77&client=t&prev=input&q='
             + text;
-    console.log("vocalizing", url);
-    ChromeLangauger.play(url);
+    // Voice RSS API
+    var url1 = 'http://api.voicerss.org/?key=6e069bbaccb64cedac38c4b63c325dd4&src=' + text + '&hl=es-es'
+    console.log("vocalizing", url1);
+    ChromeLangauger.play(url1);
+});
+
+
+
+chrome.tabs.onUpdated.addListener(function(tabId , info) {
+    console.log(info);
+    if (info.status == "complete") {
+        ChromeLangauger.activate({id: tabId});
+    }
 });
