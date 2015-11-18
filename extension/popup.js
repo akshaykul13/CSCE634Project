@@ -1,7 +1,11 @@
 $(document).ready(function() {
+
+    var defaultTargetLang = "Spanish";
+
     // Initialize the options
-    chrome.storage.sync.get(['languagerEnabled', 'wordReplacementEnabled', 'wordReplacementQuizLevel'], function(data) {
+    chrome.storage.sync.get(['languagerEnabled', 'langaugerTargetLang', 'wordReplacementEnabled', 'wordReplacementQuizLevel'], function(data) {
         $('#extensionEnabled').prop('checked', data.languagerEnabled);  
+        $('#targetLangSelect').val(data.langaugerTargetLang || defaultTargetLang);
         $('#wordReplacementCheckbox').prop('checked', data.wordReplacementEnabled);       
         if(data.wordReplacementEnabled) {
             $('#wordReplacementLevelDiv').show();
@@ -11,6 +15,16 @@ $(document).ready(function() {
         }
     });    
 
+    $('#extensionEnabled').click(function() {
+        chrome.storage.sync.get(['languagerEnabled'], function(data) {
+            chrome.storage.sync.set({'languagerEnabled': !data.languagerEnabled});       
+        });        
+        chrome.runtime.sendMessage({msgId: "toggleExtension"});
+    });
+
+    $('#targetLangSelect').change(function() {           
+        chrome.storage.sync.set({'langaugerTargetLang': $('#targetLangSelect').val()});
+    });
 
     $('#wordReplacementCheckbox').click(function() {
         chrome.storage.sync.get(['languagerEnabled', 'wordReplacementEnabled'], function(data) {
@@ -25,16 +39,5 @@ $(document).ready(function() {
                 }
             }
         });                
-    });
-
-    $('#extensionEnabled').click(function() {
-        chrome.storage.sync.get(['languagerEnabled'], function(data) {
-            chrome.storage.sync.set({'languagerEnabled': !data.languagerEnabled});       
-        });        
-        chrome.runtime.sendMessage({msgId: "toggleExtension"});
-    });
-
-    $('#wordReplacementLevel').change(function() {        
-        chrome.storage.sync.set({'wordReplacementQuizLevel': $('#wordReplacementLevel').val()});
     });
 });

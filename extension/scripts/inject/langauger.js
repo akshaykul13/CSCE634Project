@@ -253,65 +253,89 @@ Langauger.engines = {};
 
 // Potentially illegitimate use of non-public API; but many other extensions use it too.
 Langauger.engines.googleTranslateFree = function(sourceText){
-    jQuery.ajax({
-        url:'https://translate.google.com/translate_a/single',
-        type: 'GET',
-        dataType: 'json',
-        success: function(response){
+    chrome.storage.sync.get(['langaugerTargetLang'], function(data) {
+        console.log(data);
+        switch(data.langaugerTargetLang) {
+            case 'Chinese':
+                Langauger.config.target = 'zh';
+                break;
+            case 'French':
+                Langauger.config.target = 'fr';
+                break;
+            case 'German':
+                Langauger.config.target = 'de';
+                break;
+            case 'Russian':
+                Langauger.config.target = 'ru';
+                break;
+            case 'Spanish':
+                Langauger.config.target = 'es';
+                break;
+            default:
+                Langauger.config.target = 'es';
+                break;
+        }
+    
+        jQuery.ajax({
+            url:'https://translate.google.com/translate_a/single',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response){
 
-            if (response && response.sentences && response.sentences.length > 0) {
-                var ret = [];
-                var expandRet = [];
-                for (var i = 0; i < response.sentences.length; i++) {
-                    ret.push(response.sentences[i].trans);
-                }
-                ret = ret.join(" ");
+                if (response && response.sentences && response.sentences.length > 0) {
+                    var ret = [];
+                    var expandRet = [];
+                    for (var i = 0; i < response.sentences.length; i++) {
+                        ret.push(response.sentences[i].trans);
+                    }
+                    ret = ret.join(" ");
 
-                // google translate sends us definitions only if a single word is searched for
-                if (response.dict) {
-                    for (var i = 0; i < response.dict.length; i++) {
-                        var def = response.dict[i],
-                            base = def.base_form,
-                            type = def.pos,
-                            terms = def.terms.join(", ");
+                    // google translate sends us definitions only if a single word is searched for
+                    if (response.dict) {
+                        for (var i = 0; i < response.dict.length; i++) {
+                            var def = response.dict[i],
+                                base = def.base_form,
+                                type = def.pos,
+                                terms = def.terms.join(", ");
 
-                        // Special case: omit definitions that are identical to translation.
-                        if (terms != ret) {
-                            expandRet.push("<em>(" + type + ")</em> " + def.terms.join(", "));
+                            // Special case: omit definitions that are identical to translation.
+                            if (terms != ret) {
+                                expandRet.push("<em>(" + type + ")</em> " + def.terms.join(", "));
+                            }
                         }
                     }
+                    if (expandRet.length) {
+                        expandRet = ["<ul class='dict'><li>" + expandRet.join("</li><li>") + "</li></ul>"];
+                    }
+                    Langauger.config.successCallback(ret, expandRet);
+                    return;
                 }
-                if (expandRet.length) {
-                    expandRet = ["<ul class='dict'><li>" + expandRet.join("</li><li>") + "</li></ul>"];
-                }
-                Langauger.config.successCallback(ret, expandRet);
-                return;
-            }
 
-            // Google Translate reports 200 in case of error messages
-            if (response.error){
-                Langauger.config.errorCallback('Google Translate Error ' + response.error.code + ': <br/>' + response.error.message);
+                // Google Translate reports 200 in case of error messages
+                if (response.error){
+                    Langauger.config.errorCallback('Google Translate Error ' + response.error.code + ': <br/>' + response.error.message);
+                }
+                else {
+                    Langauger.config.errorCallback('Google Translate: unable to parse response.');
+                }
+            },
+            error: function(xhr, status){
+                Langauger.config.errorCallback("Google Translate XHR error: <br/>"  + status);
+            },
+            data: {
+                // appear as the official Google Translate chrome extension
+                client:'gtx',
+                hl:'en-US',
+                source:'bubble',
+                tk: (Math.floor((new Date).getTime() / 36E5) ^ 123456) + "|" + (Math.floor((Math.sqrt(5) - 1) / 2 * ((Math.floor((new Date).getTime() / 36E5) ^ 123456) ^ 654321) % 1 * 1048576)),
+                dt: 'bd',
+                dt: 't',
+                dj: 1,
+                sl: Langauger.config.source,
+                tl: Langauger.config.target,
+                q: sourceText
             }
-            else {
-                Langauger.config.errorCallback('Google Translate: unable to parse response.');
-            }
-        },
-        error: function(xhr, status){
-            Langauger.config.errorCallback("Google Translate XHR error: <br/>"  + status);
-        },
-        data: {
-            // appear as the official Google Translate chrome extension
-            client:'gtx',
-            hl:'en-US',
-            source:'bubble',
-            tk: (Math.floor((new Date).getTime() / 36E5) ^ 123456) + "|" + (Math.floor((Math.sqrt(5) - 1) / 2 * ((Math.floor((new Date).getTime() / 36E5) ^ 123456) ^ 654321) % 1 * 1048576)),
-            dt: 'bd',
-            dt: 't',
-            dj: 1,
-            sl: Langauger.config.source,
-            tl: Langauger.config.target,
-            q: sourceText
-        }
+        });
     });
 }
 
