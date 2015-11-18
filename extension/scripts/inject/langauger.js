@@ -21,7 +21,6 @@ Langauger.init = function(){
     }
 	// clear result box on any click (mousedown)
   	jQuery('body').mousedown(function(event){
-  		console.log("MOUSEDOWN", event); 
     	// only act on left clicks (on osx, ctrlKey triggers contextMenu too)
     	if (event.which != 1 || event.ctrlKey) {
       		return true;
@@ -37,7 +36,6 @@ Langauger.init = function(){
 
   	// display translation of selection (mouseup)
   	jQuery('body').mouseup(function(event){
-  		console.log("MOUSEUP", event);
     	if (event.which != 1 || event.ctrlKey) {
       		return true;
     	}
@@ -49,12 +47,12 @@ Langauger.init = function(){
 };
 
 Langauger.boot = function(){
-  if (!Langauger.running) {
-    Langauger.running = true;
-    Langauger.init();
-    //Langauger.showMessage('Langauger is activated. Select a phrase to translate it. Alt-click a link to translate its text.');
-    window.getSelection().removeAllRanges()
-  }
+    if (!Langauger.running) {
+        Langauger.running = true;
+        Langauger.init();
+        //Langauger.showMessage('Langauger is activated. Select a phrase to translate it. Alt-click a link to translate its text.');
+        window.getSelection().removeAllRanges()
+    }
   //Langauger.processSelection();
 }
 
@@ -63,18 +61,15 @@ Langauger.boot = function(){
 });	*/
 
 Langauger.setConfig = function(config){
-  var defaultConfig = {
-    googleTranslateJsonp: true,
-    engine: Langauger.engines.googleTranslateFree,
-    successCallback: Langauger.callbacks.standardSuccesCallback,
-    errorCallback: Langauger.callbacks.standardErrorCallback,
-  };
+    var defaultConfig = {
+        googleTranslateJsonp: true,
+        engine: Langauger.engines.googleTranslateFree,
+        successCallback: Langauger.callbacks.standardSuccesCallback,
+        errorCallback: Langauger.callbacks.standardErrorCallback,
+    };
 
-  Langauger.config = jQuery.extend({}, defaultConfig, config);
-  console.log("running Langauger.setConfig");
-  console.log(Langauger.config);
-
-  return;
+    Langauger.config = jQuery.extend({}, defaultConfig, config);    
+    return;
 }
 
 //============================================================================

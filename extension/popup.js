@@ -29,7 +29,6 @@ Langauger.boot = function(){
   if (!Langauger.running) {
     Langauger.running = true;
     Langauger.init();
-    //Langauger.showMessage('BabelFrog is activated. Select a phrase to translate it. Alt-click a link to translate its text.');
     window.getSelection().removeAllRanges()
   }
   //Langauger.processSelection();
