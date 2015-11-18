@@ -39,10 +39,13 @@ Langauger.init = function(){
     	if (event.which != 1 || event.ctrlKey) {
       		return true;
     	}
-    	      
-      	window.setTimeout(function(){
-        	Langauger.translateListener(event);
-      	}, 10);    
+    	chrome.storage.sync.get(['languagerEnabled'], function(data) {
+            if(data.languagerEnabled) {
+                window.setTimeout(function(){
+                    Langauger.translateListener(event);
+                }, 10);    
+            }
+        });      	
 	});
 };
 

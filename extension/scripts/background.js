@@ -1,5 +1,4 @@
 var ChromeLangauger = {};
-var LanguagerisEnabled = true;
 var currentTabID;
 
 var settings = new Store("settings", {
@@ -22,6 +21,13 @@ ChromeLangauger.setBadge = function(tabId) {
     });
 }
 
+ChromeLangauger.removeBadge = function(tabId) {
+    chrome.browserAction.setBadgeText({
+        text: "",
+        tabId: tabId
+    });
+}
+
 ChromeLangauger.settings = function(settings){
     var ret = {
         sourceLang: settings.get('sourceLang'),
@@ -36,7 +42,11 @@ ChromeLangauger.activate = function(tab) {
 	chrome.tabs.sendMessage(tab.id, { msgId: "isLangaugerLoaded" }, function(result) {
         // not already loaded
         if (typeof(result) == "undefined") {
-        	ChromeLangauger.setBadge(tab.id);
+            chrome.storage.sync.get(['languagerEnabled'], function(data) {
+                if(data.languagerEnabled) {
+                    ChromeLangauger.setBadge(tab.id);
+                }
+            });
             console.log(settings.get("vocalize"));
         	console.log("activated");
 
@@ -107,13 +117,18 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.msgId != 'toggleExtension') {
         return;
     }
-    LanguagerisEnabled = !LanguagerisEnabled;
-    chrome.tabs.reload(currentTabID);
+    chrome.storage.sync.get(['languagerEnabled'], function(data) {
+        if(data.languagerEnabled) {
+            ChromeLangauger.setBadge(currentTabID);
+        } else {
+            ChromeLangauger.removeBadge(currentTabID);
+        }
+    });    
 });
 
 chrome.tabs.onUpdated.addListener(function(tabId , info) {
     console.log(info);
-    if (info.status == "complete" && LanguagerisEnabled) {
+    if (info.status == "complete") {
         currentTabID = tabId;
         ChromeLangauger.activate({id: tabId});
     }

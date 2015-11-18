@@ -19,6 +19,7 @@
   },  
   "permissions": [
     "activeTab",
+    "storage",
     "contextMenus",
     "https://translate.google.com/*",
     "https://ajax.googleapis.com/",
