@@ -1,4 +1,6 @@
 var ChromeLangauger = {};
+var LanguagerisEnabled = true;
+var currentTabID;
 
 var settings = new Store("settings", {
     "sourceLang": "en",
@@ -15,7 +17,7 @@ ChromeLangauger.capitalize = function(str) {
 
 ChromeLangauger.setBadge = function(tabId) {
     chrome.browserAction.setBadgeText({
-        text: ChromeLangauger.capitalize(settings.get('sourceLang')),
+        text: ChromeLangauger.capitalize(settings.get('targetLang')),
         tabId: tabId
     });
 }
@@ -38,7 +40,7 @@ ChromeLangauger.activate = function(tab) {
             console.log(settings.get("vocalize"));
         	console.log("activated");
 
-            var files = ["scripts/inject/jquery.min.js", "scripts/inject/rangy-core.js", "scripts/inject/langauger.js"];
+            var files = ["scripts/inject/jquery.min.js", "scripts/inject/rangy-core.js", "scripts/inject/parser.js", "scripts/inject/langauger.js"];
             for (var i = 0; i < files.length; i++) {
                 chrome.tabs.executeScript(tab.id, {file: files[i]});
             }
@@ -100,10 +102,19 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    // flag to designate type of message
+    if (request.msgId != 'toggleExtension') {
+        return;
+    }
+    LanguagerisEnabled = !LanguagerisEnabled;
+    chrome.tabs.reload(currentTabID);
+});
 
 chrome.tabs.onUpdated.addListener(function(tabId , info) {
     console.log(info);
-    if (info.status == "complete") {
+    if (info.status == "complete" && LanguagerisEnabled) {
+        currentTabID = tabId;
         ChromeLangauger.activate({id: tabId});
     }
 });

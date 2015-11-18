@@ -4,11 +4,11 @@ var Langauger = Langauger || function(){};
 Langauger.config = {};
 
 Langauger.currentJob = {
-  text: '',
-  translation: '',
-  range: null,
-  x:0,
-  y:0
+    text: '',
+    translation: '',
+    range: null,
+    x:0,
+    y:0
 };
 
 Langauger.init = function(){
@@ -50,6 +50,7 @@ Langauger.boot = function(){
     if (!Langauger.running) {
         Langauger.running = true;
         Langauger.init();
+        Langauger.wordReplacementQuiz(2);
         //Langauger.showMessage('Langauger is activated. Select a phrase to translate it. Alt-click a link to translate its text.');
         window.getSelection().removeAllRanges()
     }
@@ -347,3 +348,64 @@ Langauger.expandToWordBoundary = function(range){
   range.setEnd(range.endContainer,end);
   return range;
 };
+
+//============================================================================
+// Word Replacement Quiz
+//============================================================================
+
+Langauger.wordReplacementQuiz = function(difficulty) {
+    var language = Langauger.config.target;
+    // Translate text
+    function translate(from, to, text, cb) {
+      $.ajax({
+        url: 'https://api.microsofttranslator.com/V2/Ajax.svc/Translate?oncomplete=?&appId=68D088969D79A8B23AF8585CC83EBA2A05A97651&from=' + from + '&to=' + to + '&text=' + encodeURIComponent(text),
+        type: "GET",
+        success: function(data) {
+          cb(decodeURIComponent(data.substr(1, data.length - 2)));
+        }
+      });
+    }
+
+    // Split Functions
+    function splitByWord(difficulty) {
+      $('p').each(function() {
+        var word = $(this).getWord(difficulty);
+        var that = this;
+        translate('en', language, word, function (translatedWord) {
+          $(that).html($(that).html().replace(/<\/*.+?>/g, '').replace(new RegExp("\\b" + word + "\\b", 'i'), "<span class='translate_14385' style='background-color: #FFFAB0; color: #000000' data-original=\"" + word + "\">" + translatedWord + "</span>"));
+          $('.translate_14385').click(function() {
+            //playSpeech(translatedWord);
+          });
+        });
+      });
+    }
+
+    function splitBySentence(difficulty, probability) {
+      $('p').each(function() {
+        var rand = Math.random() * 10;
+        if (rand < probability) {
+          var sentence = $(this).getSentence(difficulty);
+          var that = this;
+          translate('en', language, sentence, function (translatedSentence) {
+            $(that).html($(that).html().replace(/<\/*.+?>/g, '').replace(sentence, "<span class='translate_14385' style='background-color: #FFFAB0; color: #000000' data-original=\"" + sentence + "\">" + translatedSentence + "</span>"));
+            $('.translate_14385').click(function() {
+              //playSpeech($(this).text());
+            });
+          });
+        }
+      });
+    }
+
+    if (difficulty == 1) {
+      splitByWord('easy');
+    } else if (difficulty == 2) {
+      splitByWord('hard');
+    } else if (difficulty == 3) {
+      splitBySentence('easy', 4);
+    } else if (difficulty == 4) {
+      splitBySentence('medium', 6);
+    } else if (difficulty == 5) {
+      splitBySentence('hard', 11);
+    }
+
+}
