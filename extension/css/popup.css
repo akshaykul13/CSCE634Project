@@ -6,6 +6,12 @@ body {
     width: 25px;
 }
 
+.logout {
+    color: black;
+    float: right;
+    margin: 10px;
+}
+
 /*
  * On Off Switch (https://proto.io/freebies/onoff/)
  */
