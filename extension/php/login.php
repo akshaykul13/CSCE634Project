@@ -9,7 +9,7 @@ if(isset($_GET['jsonString'])){
 	$password = $json->{'password'};	
 	error_log("INFO: Login request from: ".$username);
 	
-	if(!empty($username) && !empty($password)){
+	if(!empty($email) && !empty($password)){
 		$query = "SELECT id, firstname, lastname FROM users WHERE email = '".$email."' and password = '".$password."'";
 		$query_run = mysqli_query($link, $query);		
 		if($query_run){

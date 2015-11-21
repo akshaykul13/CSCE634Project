@@ -4,8 +4,8 @@ require 'connect.php';
 if(isset($_POST['jsonString'])){
 	$content = $_POST['jsonString'];
 	$json = json_decode($content, false);	
-	$firstName = $json->{'firstName'};
-	$lastName = $json->{'lastName'};
+	$firstName = $json->{'firstname'};
+	$lastName = $json->{'lastname'};
 	$email = $json->{'email'};
 	$password = $json->{'password'};
 	

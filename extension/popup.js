@@ -1,49 +1,95 @@
 $(document).ready(function() {
 
     var defaultTargetLang = "Spanish";
-
-    console.log("Calling PHP");
-    jQuery.ajax({
-        url:'http://localhost/CSCE634Project/extension/php/test.php',
-        type: 'GET',
-        success: function(response){
-            console.log(response);
+    
+    ////////////////////////////////////////////////////////////////////////
+    // Login & Registration                                               //
+    ////////////////////////////////////////////////////////////////////////
+    
+    $('#register_button').click(function(){
+        var userObject = new Object();
+        var firstname = $('#register_firstname').val();
+        userObject.firstname = firstname;
+        var lastname = $('#register_lastname').val();
+        userObject.lastname = lastname;
+        var email = $('#register_emailid').val();
+        userObject.email = email;
+        var password = $('#register_password').val();
+        userObject.password = password;
+        console.log(userObject);
+        var jsonString = JSON.stringify(userObject);
+        $.ajax({
+            type: 'POST',     
+            data: 'jsonString='+jsonString, 
+            url: 'http://localhost/CSCE634Project/extension/php/register.php',      
+            success: function(data) {     
+                console.log(data);
+                //window.location.replace("login.html");
+            }
+        });
+    });
+  
+    $('#login_button').click(function(){
+        var userObject = new Object();    
+        var email = $('#login_emailid').val();
+        userObject.email = email;
+        var password = $('#login_password').val();
+        userObject.password = password;
+        console.log(userObject);
+        var jsonString = JSON.stringify(userObject);
+        $.ajax({
+            type: 'GET',     
+            data: 'jsonString='+jsonString, 
+            url: 'http://localhost/CSCE634Project/extension/php/login.php',     
+            success: function(JSONObject) {     
+                console.log(JSONObject);  
+                if(JSONObject.status == "Error"){
+                    $('#loginStatus').html(JSONObject['reason']);
+                }else{
+                    $('#preferencesWidget').show();
+                    $('#loginWidget').hide();
+                }
+            }
+        });
+    });
+   
+    $('.form').find('input, textarea').on('keyup blur focus', function(e) {
+        var $this = $(this),
+        label = $this.prev('label');
+        if (e.type === 'keyup') {
+            if ($this.val() === '') {
+                label.removeClass('active highlight');
+            } else {
+                label.addClass('active highlight');
+            }
+        } else if (e.type === 'blur') {
+            if ($this.val() === '') {
+                label.removeClass('active highlight');
+            } else {
+                label.removeClass('highlight');
+            }
+        } else if (e.type === 'focus') {
+            if ($this.val() === '') {
+                label.removeClass('highlight');
+            } else if ($this.val() !== '') {
+                label.addClass('highlight');
+            }
         }
+    });   
+
+    $('.tab a').on('click', function(e) {
+        e.preventDefault();
+        $(this).parent().addClass('active');
+        $(this).parent().siblings().removeClass('active');
+        target = $(this).attr('href');
+        $('.tab-content > div').not(target).hide();
+        $(target).fadeIn(600);
     });
 
-    $('.form').find('input, textarea').on('keyup blur focus', function(e) {
-    var $this = $(this),
-    label = $this.prev('label');
-    if (e.type === 'keyup') {
-    if ($this.val() === '') {
-      label.removeClass('active highlight');
-    } else {
-      label.addClass('active highlight');
-    }
-    } else if (e.type === 'blur') {
-    if ($this.val() === '') {
-      label.removeClass('active highlight');
-    } else {
-      label.removeClass('highlight');
-    }
-    } else if (e.type === 'focus') {
 
-    if ($this.val() === '') {
-      label.removeClass('highlight');
-    } else if ($this.val() !== '') {
-      label.addClass('highlight');
-    }
-    }
-  });
-
-  $('.tab a').on('click', function(e) {
-    e.preventDefault();
-    $(this).parent().addClass('active');
-    $(this).parent().siblings().removeClass('active');
-    target = $(this).attr('href');
-    $('.tab-content > div').not(target).hide();
-    $(target).fadeIn(600);
-  });
+    ////////////////////////////////////////////////////////////////////////
+    // Preferences                                                        //
+    ////////////////////////////////////////////////////////////////////////
 
     // Initialize the options
     chrome.storage.sync.get(['languagerEnabled', 'langaugerTargetLang', 'wordReplacementEnabled', 'wordReplacementQuizLevel'], function(data) {
