@@ -2,6 +2,15 @@ $(document).ready(function() {
 
     var defaultTargetLang = "Spanish";
 
+    console.log("Calling PHP");
+    jQuery.ajax({
+        url:'http://localhost/CSCE634Project/extension/php/test.php',
+        type: 'GET',
+        success: function(response){
+            console.log(response);
+        }
+    });
+
     // Initialize the options
     chrome.storage.sync.get(['languagerEnabled', 'langaugerTargetLang', 'wordReplacementEnabled', 'wordReplacementQuizLevel'], function(data) {
         $('#extensionEnabled').prop('checked', data.languagerEnabled);  
