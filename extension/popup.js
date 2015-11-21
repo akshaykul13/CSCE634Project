@@ -6,7 +6,7 @@ $(document).ready(function() {
 
     // Initialize the options
     chrome.storage.sync.get(['loggedInUserID', 'languagerEnabled', 'langaugerTargetLang', 'wordReplacementEnabled', 'wordReplacementQuizLevel'], function(data) {
-        if(data.loggedInUserID) {
+        if(data.loggedInUserID && data.loggedInUserID != -1) {
             $('#preferencesWidget').show();
             $('#loginWidget').hide();            
         } else {
@@ -138,5 +138,11 @@ $(document).ready(function() {
                 }
             }
         });                
+    });
+
+    $('#logoutButton').click(function() {
+        chrome.storage.sync.set({'loggedInUserID': -1});       
+        $('#preferencesWidget').hide();
+        $('#loginWidget').show();
     });
 });
