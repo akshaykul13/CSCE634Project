@@ -1,6 +1,28 @@
 $(document).ready(function() {
 
     var defaultTargetLang = "Spanish";
+    $('#preferencesWidget').hide();
+    $('#loginWidget').hide();            
+
+    // Initialize the options
+    chrome.storage.sync.get(['loggedInUserID', 'languagerEnabled', 'langaugerTargetLang', 'wordReplacementEnabled', 'wordReplacementQuizLevel'], function(data) {
+        if(data.loggedInUserID) {
+            $('#preferencesWidget').show();
+            $('#loginWidget').hide();            
+        } else {
+            $('#preferencesWidget').hide();
+            $('#loginWidget').show();
+        }        
+        $('#extensionEnabled').prop('checked', data.languagerEnabled);  
+        $('#targetLangSelect').val(data.langaugerTargetLang || defaultTargetLang);
+        $('#wordReplacementCheckbox').prop('checked', data.wordReplacementEnabled);       
+        if(data.wordReplacementEnabled) {
+            $('#wordReplacementLevelDiv').show();
+            $('#wordReplacementLevel').val(data.wordReplacementQuizLevel);
+        } else {
+            $('#wordReplacementLevelDiv').hide();
+        }
+    });   
     
     ////////////////////////////////////////////////////////////////////////
     // Login & Registration                                               //
@@ -24,7 +46,6 @@ $(document).ready(function() {
             url: 'http://localhost/CSCE634Project/extension/php/register.php',      
             success: function(data) {     
                 console.log(data);
-                //window.location.replace("login.html");
             }
         });
     });
@@ -46,6 +67,7 @@ $(document).ready(function() {
                 if(JSONObject.status == "Error"){
                     $('#loginStatus').html(JSONObject['reason']);
                 }else{
+                    chrome.storage.sync.set({'loggedInUserID': JSON.parse(JSONObject)[0].id});       
                     $('#preferencesWidget').show();
                     $('#loginWidget').hide();
                 }
@@ -89,20 +111,7 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////
     // Preferences                                                        //
-    ////////////////////////////////////////////////////////////////////////
-
-    // Initialize the options
-    chrome.storage.sync.get(['languagerEnabled', 'langaugerTargetLang', 'wordReplacementEnabled', 'wordReplacementQuizLevel'], function(data) {
-        $('#extensionEnabled').prop('checked', data.languagerEnabled);  
-        $('#targetLangSelect').val(data.langaugerTargetLang || defaultTargetLang);
-        $('#wordReplacementCheckbox').prop('checked', data.wordReplacementEnabled);       
-        if(data.wordReplacementEnabled) {
-            $('#wordReplacementLevelDiv').show();
-            $('#wordReplacementLevel').val(data.wordReplacementQuizLevel);
-        } else {
-            $('#wordReplacementLevelDiv').hide();
-        }
-    });    
+    //////////////////////////////////////////////////////////////////////// 
 
     $('#extensionEnabled').click(function() {
         chrome.storage.sync.get(['languagerEnabled'], function(data) {
