@@ -119,10 +119,25 @@ function getCodeForVocalize(lang) {
         case 'French':
             code = 'fr-fr';
             break;
-        case 'de':
+        case 'German':
             code = 'de-de';
             break;
         case 'Russian':
+            code = 'ru-ru';
+            break;
+        case 'Spanish':
+            code = 'es-es';
+            break;
+        case 'zh':
+            code = 'zh-cn';
+            break;
+        case 'fr':
+            code = 'fr-fr';
+            break;
+        case 'de':
+            code = 'de-de';
+            break;
+        case 'ru':
             code = 'ru-ru';
             break;
         case 'es':
