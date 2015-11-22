@@ -180,18 +180,46 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
     console.log("Saving Word");
     console.log(request);
-    var object = new Object();            
-    object.id = request.id;
-    object.text = request.text;
-    var jsonString = JSON.stringify(object);
-    $.ajax({
-        type: 'POST',     
-        data: 'jsonString='+jsonString, 
-        url: 'http://localhost/CSCE634Project/extension/php/saveword.php',     
-        success: function(JSONObject) {     
-            console.log(JSONObject);              
-        }
-    });   
+    chrome.storage.sync.get(['langaugerTargetLang'], function(data) {
+        var object = new Object();            
+        object.id = request.id;
+        object.text = request.text;        
+        object.language = getLanguageCode(data.langaugerTargetLang);
+        var jsonString = JSON.stringify(object);
+        $.ajax({
+            type: 'POST',     
+            data: 'jsonString='+jsonString, 
+            url: 'http://localhost/CSCE634Project/extension/php/saveword.php',     
+            success: function(JSONObject) {     
+                console.log(JSONObject);              
+            }
+        });   
+    });    
 });
+
+function getLanguageCode(language) {
+    var code;
+    switch(language) {
+        case 'Chinese':
+            code = 'zh';
+            break;
+        case 'French':
+            code = 'fr';
+            break;
+        case 'German':
+            code = 'de';
+            break;
+        case 'Russian':
+            code = 'ru';
+            break;
+        case 'Spanish':
+            code = 'es';
+            break;
+        default:
+            code = 'es';
+            break;
+    }
+    return code;
+}
 
 
