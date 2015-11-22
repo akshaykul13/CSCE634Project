@@ -39,13 +39,13 @@ Langauger.init = function(){
     	if (event.which != 1 || event.ctrlKey) {
       		return true;
     	}
-    	chrome.storage.sync.get(['languagerEnabled'], function(data) {
+    	chrome.storage.sync.get(['loggedInUserID', 'languagerEnabled'], function(data) {
             if(data.languagerEnabled) {
                 window.setTimeout(function(){
-                    Langauger.translateListener(event);
+                    Langauger.translateListener(event, data.loggedInUserID);
                 }, 10);    
             }
-        });      	
+        });  
 	});
 };
 
@@ -79,16 +79,16 @@ Langauger.setConfig = function(config){
 //============================================================================
 
 
-Langauger.translateListener = function(event){
+Langauger.translateListener = function(event, id){
     // only pay attention to left-clicks
     if (event.button!==0) {
         return false;
     }
 
-    Langauger.processSelection();
+    Langauger.processSelection(id);
 }
 
-Langauger.processSelection = function() {
+Langauger.processSelection = function(id) {
 
     // no text is selected
     if (rangy.getSelection().isCollapsed){
@@ -139,11 +139,21 @@ Langauger.processSelection = function() {
 
         //send request to Google
         Langauger.invokeTranslationEngine(currentJob);
+        //save the word in the database
+        Langauger.saveWord(currentJob.text, id);
     }
 }
 
 Langauger.invokeTranslationEngine = function(currentJob){
     Langauger.config.engine(currentJob.text);
+}
+
+Langauger.saveWord = function(text, id) {
+    // Check for word, if sentence return
+    if(text.indexOf(" ") != -1) {
+        return;
+    }
+    chrome.runtime.sendMessage({msgId: "saveLangaugerWord", id: id, text: text});
 }
 
 //============================================================================

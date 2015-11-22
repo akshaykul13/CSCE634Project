@@ -172,3 +172,26 @@ chrome.tabs.onUpdated.addListener(function(tabId , info) {
         ChromeLangauger.activate({id: tabId});
     }
 });
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    // flag to designate type of message
+    if (request.msgId != 'saveLangaugerWord') {
+        return;
+    }
+    console.log("Saving Word");
+    console.log(request);
+    var object = new Object();            
+    object.id = request.id;
+    object.text = request.text;
+    var jsonString = JSON.stringify(object);
+    $.ajax({
+        type: 'POST',     
+        data: 'jsonString='+jsonString, 
+        url: 'http://localhost/CSCE634Project/extension/php/saveword.php',     
+        success: function(JSONObject) {     
+            console.log(JSONObject);              
+        }
+    });   
+});
+
+
