@@ -2,7 +2,7 @@ body {
     width: 424px;
 }
 
-#wordReplacementCheckbox {
+#wordReplacementCheckbox, #mcqQuizCheckbox {
     width: 25px;
 }
 

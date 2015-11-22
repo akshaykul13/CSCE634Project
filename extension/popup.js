@@ -5,7 +5,7 @@ $(document).ready(function() {
     $('#loginWidget').hide();            
 
     // Initialize the options
-    chrome.storage.sync.get(['loggedInUserID', 'languagerEnabled', 'langaugerTargetLang', 'wordReplacementEnabled', 'wordReplacementQuizLevel'], function(data) {
+    chrome.storage.sync.get(['loggedInUserID', 'languagerEnabled', 'langaugerTargetLang', 'wordReplacementEnabled', 'mcqQuizEnabled', 'wordReplacementQuizLevel'], function(data) {
         if(data.loggedInUserID && data.loggedInUserID != -1) {
             $('#preferencesWidget').show();
             $('#loginWidget').hide();            
@@ -22,6 +22,7 @@ $(document).ready(function() {
         } else {
             $('#wordReplacementLevelDiv').hide();
         }
+        $('#mcqQuizCheckbox').prop('checked', data.mcqQuizEnabled);
     });   
     
     ////////////////////////////////////////////////////////////////////////
@@ -129,13 +130,21 @@ $(document).ready(function() {
         chrome.storage.sync.get(['languagerEnabled', 'wordReplacementEnabled'], function(data) {
             if(data.languagerEnabled) {
                 var wordReplacementQuiz = $('#wordReplacementCheckbox').prop('checked');
-                console.log(wordReplacementQuiz);
                 chrome.storage.sync.set({'wordReplacementEnabled': wordReplacementQuiz});
                 if(wordReplacementQuiz) {
                     $('#wordReplacementLevelDiv').show();
                 } else {
                     $('#wordReplacementLevelDiv').hide();
                 }
+            }
+        });                
+    });
+
+    $('#mcqQuizCheckbox').click(function() {
+        chrome.storage.sync.get(['languagerEnabled', 'mcqQuizEnabled'], function(data) {
+            if(data.languagerEnabled) {
+                var mcqQuiz = $('#mcqQuizCheckbox').prop('checked');
+                chrome.storage.sync.set({'mcqQuizEnabled': mcqQuiz});                
             }
         });                
     });
