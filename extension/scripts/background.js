@@ -170,8 +170,27 @@ chrome.tabs.onUpdated.addListener(function(tabId , info) {
     if (info.status == "complete") {
         currentTabID = tabId;
         ChromeLangauger.activate({id: tabId});
+        mcqQuiz();
     }
 });
+
+function mcqQuiz() {
+    chrome.storage.sync.get(['loggedInUserID', 'languagerEnabled', 'langaugerTargetLang', 'mcqQuizEnabled'], function(data) {
+        if(data.languagerEnabled && data.mcqQuizEnabled) {
+            var object = new Object();            
+            object.id = data.loggedInUserID;
+            var jsonString = JSON.stringify(object);
+            $.ajax({
+                type: 'GET',     
+                data: 'jsonString='+jsonString, 
+                url: 'http://localhost/CSCE634Project/extension/php/mcqquiz.php',     
+                success: function(JSONObject) {     
+                    var result = JSON.parse(JSONObject);
+                }
+            });   
+        }
+    });
+}
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     // flag to designate type of message
