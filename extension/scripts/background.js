@@ -170,11 +170,11 @@ chrome.tabs.onUpdated.addListener(function(tabId , info) {
     if (info.status == "complete") {
         currentTabID = tabId;
         ChromeLangauger.activate({id: tabId});
-        mcqQuiz();
+        mcqQuiz(tabId);
     }
 });
 
-function mcqQuiz() {
+function mcqQuiz(tabId) {
     chrome.storage.sync.get(['loggedInUserID', 'languagerEnabled', 'langaugerTargetLang', 'mcqQuizEnabled'], function(data) {
         if(data.languagerEnabled && data.mcqQuizEnabled) {
             var object = new Object();            
@@ -186,6 +186,13 @@ function mcqQuiz() {
                 url: 'http://localhost/CSCE634Project/extension/php/mcqquiz.php',     
                 success: function(JSONObject) {     
                     var result = JSON.parse(JSONObject);
+                    console.log(result);
+                    chrome.tabs.sendMessage(tabId, {
+                        msgId: "showMCQQuiz",
+                        word: result[0].word,
+                        language: result[0].language,
+                        options: result[1]
+                    });
                 }
             });   
         }

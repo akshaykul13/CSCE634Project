@@ -442,5 +442,29 @@ Langauger.wordReplacementQuiz = function(difficulty) {
     } else if (difficulty == 5) {
       splitBySentence('hard', 11);
     }
+}
 
+//============================================================================
+// MCQ Quiz
+//============================================================================
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    // flag to designate type of message
+    if (request.msgId != 'showMCQQuiz') {
+        return;
+    }     
+    console.log(request);
+    Langauger.mcqQuiz(request.word, request.language, request.options);
+
+});
+
+Langauger.mcqQuiz = function(word, language, options) {
+    console.log("MCQ");
+    var innerDiv = '<p class="question">'+word+'</p><ul class="answers"><input type="radio" name="q" value="0" id="q0"><label for="q1a">'+word+'</label><br/>';
+    for(i = 0; i < options.length; i++) {
+        innerDiv = innerDiv + '<input type="radio" name="q" value="'+(i+1)+'" id="q'+(i+1)+'"><label for="q'+(i+1)+'">'+options[i].word+'</label><br/>';
+    }                        
+    innerDiv = innerDiv + '</ul>';
+    var el = jQuery('<div id="Langauger-mcq-box" class="Langauger-box" style="width:150px">').html(innerDiv);
+    el.css( { 'left': ($('body').width()-200) + 'px', 'top':  '20px' }).appendTo('body')
 }
