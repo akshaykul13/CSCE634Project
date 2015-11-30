@@ -13,7 +13,9 @@ if(isset($_POST['jsonString'])){
 	if($check_query_run){
 		$check_query_num_rows = $check_query_run->num_rows;
 		if($check_query_num_rows == 0){
-			$query = "Insert into words values ('',".$id.",'".$text."','".$language."')";
+			date_default_timezone_set("America/Chicago");
+			$lastmodified = date("Y-n-j H:i:s");
+			$query = "Insert into words values ('',".$id.",'".$text."','".$language."',0,'".$lastmodified."')";
 			$query_run = mysqli_query($link, $query);
 			echo $query;
 			if($query_run){
