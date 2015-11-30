@@ -1,5 +1,7 @@
 $(document).ready(function() {
 
+    var host ="http://localhost";
+    //var host = "http://ec2-52-1-223-254.compute-1.amazonaws.com";
     var defaultTargetLang = "Spanish";
     $('#preferencesWidget').hide();
     $('#loginWidget').hide();            
@@ -40,7 +42,7 @@ $(document).ready(function() {
         $.ajax({
             type: 'GET',     
             data: 'jsonString='+jsonString, 
-            url: 'http://localhost/CSCE634Project/extension/php/getrecentwords.php',     
+            url: host+'/CSCE634Project/extension/php/getrecentwords.php',     
             success: function(JSONObject) {     
                 var recentWords = JSON.parse(JSONObject);   
                 var html = '<tbody>';
@@ -73,7 +75,7 @@ $(document).ready(function() {
         $.ajax({
             type: 'POST',     
             data: 'jsonString='+jsonString, 
-            url: 'http://localhost/CSCE634Project/extension/php/register.php',      
+            url: host+'/CSCE634Project/extension/php/register.php',      
             success: function(data) {     
                 console.log(data);
             }
@@ -91,7 +93,7 @@ $(document).ready(function() {
         $.ajax({
             type: 'GET',     
             data: 'jsonString='+jsonString, 
-            url: 'http://localhost/CSCE634Project/extension/php/login.php',     
+            url: host+'/CSCE634Project/extension/php/login.php',     
             success: function(JSONObject) {     
                 console.log(JSONObject);  
                 if(JSONObject.status == "Error"){

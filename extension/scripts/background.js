@@ -1,6 +1,9 @@
 var ChromeLangauger = {};
 var currentTabID;
 
+var host ="http://localhost";
+//var host = "http://ec2-52-1-223-254.compute-1.amazonaws.com";
+
 var settings = new Store("settings", {
     "sourceLang": "en",
     "targetLang": "fr",
@@ -184,7 +187,7 @@ function mcqQuiz(tabId) {
             $.ajax({
                 type: 'GET',     
                 data: 'jsonString='+jsonString, 
-                url: 'http://localhost/CSCE634Project/extension/php/mcqquiz.php',     
+                url: host+'/CSCE634Project/extension/php/mcqquiz.php',     
                 success: function(JSONObject) {     
                     var result = JSON.parse(JSONObject);
                     console.log(result);
@@ -216,7 +219,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         $.ajax({
             type: 'POST',     
             data: 'jsonString='+jsonString, 
-            url: 'http://localhost/CSCE634Project/extension/php/saveword.php',     
+            url: host+'/CSCE634Project/extension/php/saveword.php',     
             success: function(JSONObject) {     
                 console.log(JSONObject);              
             }
@@ -239,7 +242,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         $.ajax({
             type: 'POST',     
             data: 'jsonString='+jsonString, 
-            url: 'http://localhost/CSCE634Project/extension/php/updatemastery.php',     
+            url: host+'/CSCE634Project/extension/php/updatemastery.php',     
             success: function(JSONObject) {     
                 console.log(JSONObject);              
             }
@@ -262,7 +265,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         $.ajax({
             type: 'GET',     
             data: 'jsonString='+jsonString, 
-            url: 'http://localhost/CSCE634Project/extension/php/getcontextualsentences.php',     
+            url: host+'/CSCE634Project/extension/php/getcontextualsentences.php',     
             success: function(JSONObject) {     
                 if(JSONObject) {
                     var result = JSON.parse(JSONObject);
