@@ -460,11 +460,22 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 Langauger.mcqQuiz = function(word, language, options) {
     console.log("MCQ");
-    var innerDiv = '<p class="question">'+word+'</p><ul class="answers"><input type="radio" name="q" value="0" id="q0"><label for="q1a">'+word+'</label><br/>';
+    var innerDiv = '<p class="question">'+word+'</p><ul class="answers">'
+    var option1 = '<input type="radio" name="q" value="1" id="q1"><label for="q1">'+word+'</label><br/>'
+    var optionsArray = [];
+    optionsArray.push(option1);
     for(i = 0; i < options.length; i++) {
-        innerDiv = innerDiv + '<input type="radio" name="q" value="'+(i+1)+'" id="q'+(i+1)+'"><label for="q'+(i+1)+'">'+options[i].word+'</label><br/>';
-    }                        
-    innerDiv = innerDiv + '</ul>';
+        for(i = 0; i < options.length; i++) {
+            optionsArray.push('<input type="radio" name="q" value="'+(i+1)+'" id="q'+(i+1)+'"><label for="q'+(i+1)+'">'+options[i].word+'</label><br/>');
+        }
+    }    
+    shuffle(optionsArray);                       
+    innerDiv = innerDiv + optionsArray[0] + optionsArray[1] + optionsArray[2] + optionsArray[3] + '</ul>';
     var el = jQuery('<div id="Langauger-mcq-box" class="Langauger-box" style="width:150px">').html(innerDiv);
     el.css( { 'left': ($('body').width()-200) + 'px', 'top':  '20px' }).appendTo('body')
+}
+
+function shuffle(o){
+    for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
 }
