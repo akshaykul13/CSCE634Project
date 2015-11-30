@@ -199,7 +199,6 @@ Langauger.callbacks.standardSuccessCallback = function(translation, expanded) {
  */
 Langauger.callbacks.standardErrorCallback = function(errorMessage){
     console.log("Google Error");
-    console.log(translation);
     console.log(expanded);
 }
 
@@ -459,23 +458,114 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 Langauger.mcqQuiz = function(word, language, options) {
-    console.log("MCQ");
-    var innerDiv = '<p class="question">'+word+'</p><ul class="answers">'
-    var option1 = '<input type="radio" name="q" value="1" id="q1"><label for="q1">'+word+'</label><br/>'
-    var optionsArray = [];
-    optionsArray.push(option1);
-    for(i = 0; i < options.length; i++) {
+    var translatedWord;
+    chrome.storage.sync.get(['langaugerTargetLang'], function(data) {
+        translatedWord = translateString(word, 'en', getLanguageCode(data.langaugerTargetLang));        
+        var innerDiv = '<p class="question">'+translatedWord+'</p><ul class="answers">';
+        var option1 = '<input type="radio" name="q" value="1" id="q1"><label for="q1">'+word+'</label><br/>';
+        var optionsArray = [];
+        optionsArray.push(option1);        
         for(i = 0; i < options.length; i++) {
-            optionsArray.push('<input type="radio" name="q" value="'+(i+1)+'" id="q'+(i+1)+'"><label for="q'+(i+1)+'">'+options[i].word+'</label><br/>');
+            optionsArray.push('<input type="radio" name="q" value="'+(i+2)+'" id="q'+(i+2)+'"><label for="q'+(i+2)+'">'+options[i].word+'</label><br/>');
         }
-    }    
-    shuffle(optionsArray);                       
-    innerDiv = innerDiv + optionsArray[0] + optionsArray[1] + optionsArray[2] + optionsArray[3] + '</ul>';
-    var el = jQuery('<div id="Langauger-mcq-box" class="Langauger-box" style="width:150px">').html(innerDiv);
-    el.css( { 'left': ($('body').width()-200) + 'px', 'top':  '20px' }).appendTo('body')
+        shuffle(optionsArray);                       
+        innerDiv = innerDiv + optionsArray[0] + optionsArray[1] + optionsArray[2] + optionsArray[3] + '</ul>';
+        innerDiv = innerDiv + '<div id="mcqCorrectAnswer" style="display:none;">Correct Answer</div>';
+        innerDiv = innerDiv + '<div id="mcqWrongAnswer" style="display:none;">Incorrect Answer</div>';
+        innerDiv = innerDiv + '<button type="button" id="submitMCQQuiz">Submit</button>';
+        innerDiv = innerDiv + '<button type="button" id="closeMCQQuiz">Close</button>';
+        var el = jQuery('<div id="Langauger-mcq-box" class="Langauger-box" style="width:200px">').html(innerDiv);
+        el.css( { 'left': ($('body').width()-200) + 'px', 'top':  '20px' }).appendTo('body');
+    });    
 }
+
+$('body').on('click', '#submitMCQQuiz', function(){
+    console.log('submit clicked');
+    var optionSelected = $("#Langauger-mcq-box input[type='radio']:checked").val();
+    if(optionSelected == 1) {
+        $("#mcqCorrectAnswer").show();
+        $("#mcqWrongAnswer").hide();
+    } else {
+        $("#mcqWrongAnswer").show();
+        $("#mcqCorrectAnswer").hide();
+    }
+});
+
+$('body').on('click', '#closeMCQQuiz', function(){
+    $('#Langauger-mcq-box').hide();
+});
 
 function shuffle(o){
     for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
     return o;
+}
+
+function getLanguageCode(language) {
+    var code;
+    switch(language) {
+        case 'Chinese':
+            code = 'zh';
+            break;
+        case 'French':
+            code = 'fr';
+            break;
+        case 'German':
+            code = 'de';
+            break;
+        case 'Russian':
+            code = 'ru';
+            break;
+        case 'Spanish':
+            code = 'es';
+            break;
+        default:
+            code = 'es';
+            break;
+    }
+    return code;
+}
+
+function translateString(sourceText, sourceLang, destLang) {
+    console.log(sourceText);
+    console.log(destLang);
+    var translation;
+    jQuery.ajax({
+        url:'https://translate.google.com/translate_a/single',
+        type: 'GET',
+        dataType: 'json',
+        async: false,
+        success: function(response){            
+            if (response && response.sentences && response.sentences.length > 0) {
+                var ret = [];
+                var expandRet = [];
+                for (var i = 0; i < response.sentences.length; i++) {
+                    ret.push(response.sentences[i].trans);
+                }
+                ret = ret.join(" ");                
+                translation =  ret;
+            }
+
+            // Google Translate reports 200 in case of error messages
+            if (response.error){
+                console.log(response);
+            }            
+        },
+        error: function(xhr, status){
+            Langauger.config.errorCallback("Google Translate XHR error: <br/>"  + status);
+        },
+        data: {
+            // appear as the official Google Translate chrome extension
+            client:'gtx',
+            hl:'en-US',
+            source:'bubble',
+            tk: (Math.floor((new Date).getTime() / 36E5) ^ 123456) + "|" + (Math.floor((Math.sqrt(5) - 1) / 2 * ((Math.floor((new Date).getTime() / 36E5) ^ 123456) ^ 654321) % 1 * 1048576)),
+            dt: 'bd',
+            dt: 't',
+            dj: 1,
+            sl: sourceLang,
+            tl: destLang,
+            q: sourceText
+        }
+    });    
+    return translation;
 }
