@@ -190,6 +190,8 @@ Langauger.callbacks.standardSuccessCallback = function(translation, expanded) {
     console.log("Langauger has received translation for the following text:");
     console.log(text);
 
+    chrome.runtime.sendMessage({msgId: "getContextualSentences", word: translation, language: Langauger.config.target});
+
     Langauger.showTooltipExpanded(currentJob.translation, expanded, currentJob.x, currentJob.y);
 };
 
@@ -501,6 +503,37 @@ $('body').on('click', '#closeMCQQuiz', function(){
     $('#Langauger-mcq-box').hide();
 });
 
+//============================================================================
+// Contextual Sentences
+//============================================================================
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    // flag to designate type of message
+    if (request.msgId != 'showContextualSentences') {
+        return;
+    }     
+    console.log(request);
+    Langauger.contextualSentences(request.sentences, request.targetLang);
+
+});
+
+Langauger.contextualSentences = function(sentences, targetLang) {
+    var innerDiv = '<ul>';    
+    var sentencesArray = [];
+    for(i = 0; i < sentences.length; i++) {
+        innerDiv = innerDiv + '<p>'+sentences[i]+'</p>';
+        innerDiv = innerDiv + '<p>'+translateString(sentences[i], getLanguageCode(targetLang), 'en')+'</p>';
+    }
+    innerDiv = innerDiv + '</ul>';    
+    innerDiv = innerDiv + '<button type="button" id="closeContextualSentencesButton">Close</button>';
+    var el = jQuery('<div id="Langauger-contextual-box" class="Langauger-box" style="width:200px">').html(innerDiv);
+    el.css( { 'left': ($('body').width()-225) + 'px', 'top':  $(window).height()/2 + 'px' }).appendTo('body');
+}
+
+$('body').on('click', '#closeContextualSentencesButton', function(){
+    $('#Langauger-contextual-box').hide();
+});
+
 function shuffle(o){
     for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
     return o;
@@ -524,6 +557,21 @@ function getLanguageCode(language) {
         case 'Spanish':
             code = 'es';
             break;
+        case 'zh':
+            code = 'zh';
+            break;
+        case 'fr':
+            code = 'fr';
+            break;
+        case 'de':
+            code = 'de';
+            break;
+        case 'ru':
+            code = 'ru';
+            break;
+        case 'es':
+            code = 'es';
+            break;
         default:
             code = 'es';
             break;
@@ -531,16 +579,15 @@ function getLanguageCode(language) {
     return code;
 }
 
-function translateString(sourceText, sourceLang, destLang) {
-    console.log(sourceText);
-    console.log(destLang);
+function translateString(sourceText, sourceLang, destLang) {    
     var translation;
     jQuery.ajax({
         url:'https://translate.google.com/translate_a/single',
         type: 'GET',
         dataType: 'json',
         async: false,
-        success: function(response){            
+        success: function(response){    
+            console.log(response);        
             if (response && response.sentences && response.sentences.length > 0) {
                 var ret = [];
                 var expandRet = [];

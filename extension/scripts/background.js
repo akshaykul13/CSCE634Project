@@ -247,6 +247,36 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     });    
 });
 
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    // flag to designate type of message
+    if (request.msgId != 'getContextualSentences') {
+        return;
+    }
+    console.log("Getting Contextual Sentences");    
+    chrome.storage.sync.get(['langaugerTargetLang'], function(data) {
+        var object = new Object();                    
+        object.word = request.word;        
+        object.language = getLanguageCodeForContextual(data.langaugerTargetLang);
+        console.log(object);
+        var jsonString = JSON.stringify(object);
+        $.ajax({
+            type: 'GET',     
+            data: 'jsonString='+jsonString, 
+            url: 'http://localhost/CSCE634Project/extension/php/getcontextualsentences.php',     
+            success: function(JSONObject) {     
+                if(JSONObject) {
+                    var result = JSON.parse(JSONObject);
+                    chrome.tabs.sendMessage(currentTabID, {
+                        msgId: "showContextualSentences",
+                        sentences: result,
+                        targetLang: data.langaugerTargetLang
+                    });           
+                }                
+            }
+        });   
+    });    
+});
+
 function getLanguageCode(language) {
     var code;
     switch(language) {
@@ -267,6 +297,31 @@ function getLanguageCode(language) {
             break;
         default:
             code = 'es';
+            break;
+    }
+    return code;
+}
+
+function getLanguageCodeForContextual(language) {
+    var code;
+    switch(language) {
+        case 'Chinese':
+            code = 'zho';
+            break;
+        case 'French':
+            code = 'fra';
+            break;
+        case 'German':
+            code = 'deu';
+            break;
+        case 'Russian':
+            code = 'rus';
+            break;
+        case 'Spanish':
+            code = 'spa';
+            break;
+        default:
+            code = 'spa';
             break;
     }
     return code;
