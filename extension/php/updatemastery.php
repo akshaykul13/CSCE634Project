@@ -14,7 +14,9 @@ if(isset($_POST['jsonString'])){
 		$check_query_num_rows = $check_query_run->num_rows;
 		if($check_query_num_rows != 0){
 			$row = mysqli_fetch_array($check_query_run);
-			$mastery = $row['mastery'] + 10;
+			if($row['mastery'] < 100) {
+				$mastery = $row['mastery'] + 10;
+			}			
 			date_default_timezone_set("America/Chicago");
 			$lastmodified = date("Y-n-j H:i:s");
 			$query = "Update words set mastery=".$mastery.", lastmodified='".$lastmodified."' where userid=".$id." and word='".$word."' and language='".$language."'";

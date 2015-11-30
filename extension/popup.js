@@ -29,7 +29,30 @@ $(document).ready(function() {
         } else {
             $('#mcqQuizFrequencyDiv').hide();
         }
+        updateRecentWords(data.loggedInUserID);
     });   
+
+    function updateRecentWords(id) {
+        var object = new Object();            
+        object.id = id;
+        console.log(object);
+        var jsonString = JSON.stringify(object);
+        $.ajax({
+            type: 'GET',     
+            data: 'jsonString='+jsonString, 
+            url: 'http://localhost/CSCE634Project/extension/php/getrecentwords.php',     
+            success: function(JSONObject) {     
+                var recentWords = JSON.parse(JSONObject);   
+                var html = '<tbody>';
+                for(i = 0; i < recentWords.length; i++) {
+                    var row = '<tr><td>'+recentWords[i].word+'</td><td>'+recentWords[i].language+'</td><td><div class="progress" style="margin-bottom:0px;"><div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="'+recentWords[i].mastery+'" aria-valuemin="0" aria-valuemax="100" style="width: '+recentWords[i].mastery+'%;">'+recentWords[i].mastery+'%</div></div></td></tr>';
+                    html = html + row;              
+                }
+                html = html + '</tbody>';
+                $('.tablesorter-blackice').append(html);
+            }
+        });
+    }
     
     ////////////////////////////////////////////////////////////////////////
     // Login & Registration                                               //
