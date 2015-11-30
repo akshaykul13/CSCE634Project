@@ -459,7 +459,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 Langauger.mcqQuiz = function(word, language, options) {
     var translatedWord;
-    chrome.storage.sync.get(['langaugerTargetLang'], function(data) {
+    chrome.storage.sync.get(['langaugerTargetLang', 'mcqQuizFrequency'], function(data) {
+        var randomNumber = Math.floor((Math.random() * 10) + 1);
+        if(randomNumber > 2 * data.mcqQuizFrequency) {
+            console.log('not showing mcq');
+            return;
+        }
         translatedWord = translateString(word, 'en', getLanguageCode(data.langaugerTargetLang));        
         var innerDiv = '<p class="question">'+translatedWord+'</p><ul class="answers">';
         var option1 = '<input type="radio" name="q" value="1" id="q1"><label for="q1">'+word+'</label><br/>';
@@ -475,7 +480,7 @@ Langauger.mcqQuiz = function(word, language, options) {
         innerDiv = innerDiv + '<button type="button" id="submitMCQQuiz">Submit</button>';
         innerDiv = innerDiv + '<button type="button" id="closeMCQQuiz">Close</button>';
         var el = jQuery('<div id="Langauger-mcq-box" class="Langauger-box" style="width:200px">').html(innerDiv);
-        el.css( { 'left': ($('body').width()-200) + 'px', 'top':  '20px' }).appendTo('body');
+        el.css( { 'left': ($('body').width()-225) + 'px', 'top':  '20px' }).appendTo('body');
     });    
 }
 

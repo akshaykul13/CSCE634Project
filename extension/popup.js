@@ -5,7 +5,7 @@ $(document).ready(function() {
     $('#loginWidget').hide();            
 
     // Initialize the options
-    chrome.storage.sync.get(['loggedInUserID', 'languagerEnabled', 'langaugerTargetLang', 'wordReplacementEnabled', 'mcqQuizEnabled', 'wordReplacementQuizLevel'], function(data) {
+    chrome.storage.sync.get(['loggedInUserID', 'languagerEnabled', 'langaugerTargetLang', 'wordReplacementEnabled', 'wordReplacementQuizLevel', 'mcqQuizEnabled', 'mcqQuizFrequency'], function(data) {
         if(data.loggedInUserID && data.loggedInUserID != -1) {
             $('#preferencesWidget').show();
             $('#loginWidget').hide();            
@@ -23,6 +23,12 @@ $(document).ready(function() {
             $('#wordReplacementLevelDiv').hide();
         }
         $('#mcqQuizCheckbox').prop('checked', data.mcqQuizEnabled);
+        if(data.mcqQuizEnabled) {
+            $('#mcqQuizFrequencyDiv').show();
+            $('#mcqQuizFrequency').val(data.mcqQuizFrequency);
+        } else {
+            $('#mcqQuizFrequencyDiv').hide();
+        }
     });   
     
     ////////////////////////////////////////////////////////////////////////
@@ -140,13 +146,26 @@ $(document).ready(function() {
         });                
     });
 
+    $('#wordReplacementLevel').change(function() {           
+        chrome.storage.sync.set({'wordReplacementQuizLevel': $('#wordReplacementLevel').val()});
+    });
+
     $('#mcqQuizCheckbox').click(function() {
         chrome.storage.sync.get(['languagerEnabled', 'mcqQuizEnabled'], function(data) {
             if(data.languagerEnabled) {
                 var mcqQuiz = $('#mcqQuizCheckbox').prop('checked');
-                chrome.storage.sync.set({'mcqQuizEnabled': mcqQuiz});                
+                chrome.storage.sync.set({'mcqQuizEnabled': mcqQuiz});     
+                if(mcqQuiz) {
+                    $('#mcqQuizFrequencyDiv').show();
+                } else {
+                    $('#mcqQuizFrequencyDiv').hide();
+                }           
             }
         });                
+    });
+
+    $('#mcqQuizFrequency').change(function() {           
+        chrome.storage.sync.set({'mcqQuizFrequency': $('#mcqQuizFrequency').val()});
     });
 
     $('#logoutButton').click(function() {
