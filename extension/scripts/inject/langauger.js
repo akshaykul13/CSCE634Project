@@ -464,19 +464,19 @@ Langauger.mcqQuiz = function(word, language, options) {
             return;
         }
         translatedWord = translateString(word, 'en', getLanguageCode(data.langaugerTargetLang));        
-        var innerDiv = '<p class="question">'+translatedWord+'</p><ul class="answers">';
-        var option1 = '<input type="radio" name="q" value="1" id="q1"><label for="q1">'+word+'</label><br/>';
+        var innerDiv = '<span class="question">'+translatedWord+'</span><ul class="answers">';
+        var option1 = '<div><input class="langaugerRadio" type="radio" name="q" value="1" id="q1"><label for="q1">'+word+'</label></div>';
         var optionsArray = [];
         optionsArray.push(option1);        
         for(i = 0; i < options.length; i++) {
-            optionsArray.push('<input type="radio" name="q" value="'+(i+2)+'" id="q'+(i+2)+'"><label for="q'+(i+2)+'">'+options[i].word+'</label><br/>');
+            optionsArray.push('<div><input class="langaugerRadio" type="radio" name="q" value="'+(i+2)+'" id="q'+(i+2)+'"><label for="q'+(i+2)+'">'+options[i].word+'</label></div>');
         }
         shuffle(optionsArray);                       
         innerDiv = innerDiv + optionsArray[0] + optionsArray[1] + optionsArray[2] + optionsArray[3] + '</ul>';
-        innerDiv = innerDiv + '<div id="mcqCorrectAnswer" style="display:none;">Correct Answer</div>';
-        innerDiv = innerDiv + '<div id="mcqWrongAnswer" style="display:none;">Incorrect Answer</div>';
-        innerDiv = innerDiv + '<button type="button" id="submitMCQQuiz">Submit</button>';
-        innerDiv = innerDiv + '<button type="button" id="closeMCQQuiz">Close</button>';
+        innerDiv = innerDiv + '<div id="mcqCorrectAnswer" style="display:none;margin-top: 100px;padding:20px;">Correct Answer</div>';
+        innerDiv = innerDiv + '<div id="mcqWrongAnswer" style="display:none;margin-top: 100px;padding:20px;">Incorrect Answer</div>';
+        innerDiv = innerDiv + '<button class="langauger-btn-style" type="button" id="submitMCQQuiz">Submit</button>';
+        innerDiv = innerDiv + '<a title="Close" class="close" id="closeMCQQuiz">X</a>';
         var el = jQuery('<div id="Langauger-mcq-box" class="Langauger-box" style="width:200px">').html(innerDiv);
         el.css( { 'left': ($('body').width()-225) + 'px', 'top':  '20px' }).appendTo('body');
     });    
@@ -518,21 +518,24 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 Langauger.contextualSentences = function(sentences, targetLang) {
-    var innerDiv = '<ul>';    
+    var innerDiv = '<ol>';    
     var sentencesArray = [];
     for(i = 0; i < sentences.length; i++) {
-        innerDiv = innerDiv + '<p>'+sentences[i]+'</p>';
-        innerDiv = innerDiv + '<p>'+translateString(sentences[i], getLanguageCode(targetLang), 'en')+'</p>';
+        innerDiv = innerDiv + '<div style="margin-top:20px"><div>'+sentences[i]+'</div>';
+        innerDiv = innerDiv + '<span style="text-align:center;">&#x296f;</span>'
+        innerDiv = innerDiv + '<div>'+translateString(sentences[i], getLanguageCode(targetLang), 'en')+'</div><div>';
     }
-    innerDiv = innerDiv + '</ul>';    
-    innerDiv = innerDiv + '<button type="button" id="closeContextualSentencesButton">Close</button>';
-    var el = jQuery('<div id="Langauger-contextual-box" class="Langauger-box" style="width:200px">').html(innerDiv);
-    el.css( { 'left': ($('body').width()-225) + 'px', 'top':  $(window).height()/2 + 'px' }).appendTo('body');
+    innerDiv = innerDiv + '</ol>';    
+    innerDiv = innerDiv + '<a id="closeContextualSentencesButton" class="close">X</a>';
+    var el = jQuery('<div id="Langauger-contextual-box" class="Langauger-box" style="width:300px">').html(innerDiv);
+    el.css( { 'left': ($('body').width()-325) + 'px', 'top':  '25px' }).appendTo('body');
 }
 
 $('body').on('click', '#closeContextualSentencesButton', function(){
     $('#Langauger-contextual-box').hide();
 });
+
+
 
 function shuffle(o){
     for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);

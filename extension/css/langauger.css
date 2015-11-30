@@ -1,7 +1,7 @@
 #Langauger-box, #Langauger-mcq-box, #Langauger-contextual-box {
-  background-color: #e6ffb3 !important;  /* light blue */
-  color:  black !important;
-  border-radius: 5px !important;
+  /*background-color: #e6ffb3 !important;*/
+  color:  white !important;
+  border-radius: 2px !important;
   box-shadow: 2px 2px 3px #888 !important;
   position: absolute !important;
   font-size: 14px !important;
@@ -15,6 +15,7 @@
   white-space:  pre-line !important;
   z-index: 2147483647 !important;
   cursor: pointer !important;
+  background: rgba(0,0,0,0.8);
 }
 
 /* higher contrast than browser default selection styling */
@@ -86,3 +87,115 @@ body.Langauger-alt-held a {
     z-index: 98;
     min-width: 100px;
 }
+
+/* MCQ Styling */
+label {
+  width: 150px;
+  border-radius: 3px;
+  border: 1px solid #D1D3D4
+}
+
+.answers {
+  margin: 0px;
+}
+
+/* hide input */
+.langaugerRadio:empty {
+  margin-left: -999px;
+}
+
+/* style label */
+.langaugerRadio:empty ~ label {
+  position: relative;
+  float: left;
+  line-height: 2em;
+  text-indent: 3.25em;
+  margin-top: 1em;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.langaugerRadio:empty ~ label:before {
+  position: absolute;
+  display: block;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  content: '';
+  width: 2.5em;
+  background: #D1D3D4;
+  border-radius: 3px 0 0 3px;
+}
+
+/* toggle hover */
+.langaugerRadio:hover:not(:checked) ~ label:before {
+  content:'\2714';
+  text-indent: .9em;
+  color: #C2C2C2;
+}
+
+.langaugerRadio:hover:not(:checked) ~ label {
+  color: #888;
+}
+
+/* toggle on */
+.langaugerRadio:checked ~ label:before {
+  content:'\2714';
+  text-indent: .9em;
+  color: #9CE2AE;
+  background-color: #4DCB6D;
+}
+
+.langaugerRadio:checked ~ label {
+  color: #777;
+}
+
+.question {
+  margin: 5px;
+}
+
+.langauger-btn-style{
+  float: right;
+  margin-top: 10px;
+  border : solid 1px #638a00;
+  border-radius : 20px 3px 3px 3px ;
+  moz-border-radius : 20px 3px 3px 3px ;
+  -webkit-box-shadow : 0px 2px 2px rgba(0,0,0,0.4);
+  -moz-box-shadow : 0px 2px 2px rgba(0,0,0,0.4);
+  box-shadow : 0px 2px 2px rgba(0,0,0,0.4);
+  font-size : 16px;
+  color : #ffffff;
+  padding : 1px 17px;
+  background : #96c300;
+  background : -webkit-gradient(linear, left top, left bottom, color-stop(0%,#96c300), color-stop(100%,#648c00));
+  background : -moz-linear-gradient(top, #96c300 0%, #648c00 100%);
+  background : -webkit-linear-gradient(top, #96c300 0%, #648c00 100%);
+  background : -o-linear-gradient(top, #96c300 0%, #648c00 100%);
+  background : -ms-linear-gradient(top, #96c300 0%, #648c00 100%);
+  background : linear-gradient(top, #96c300 0%, #648c00 100%);
+  filter : progid:DXImageTransform.Microsoft.gradient( startColorstr='#96c300', endColorstr='#648c00',GradientType=0 );
+}
+
+.close {
+  background: #606061;
+  color: #FFFFFF;
+  line-height: 25px;
+  position: absolute;
+  right: -12px;
+  text-align: center;
+  top: -10px;
+  width: 24px;
+  text-decoration: none;
+  font-weight: bold;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  border-radius: 12px;
+  -moz-box-shadow: 1px 1px 3px #000;
+  -webkit-box-shadow: 1px 1px 3px #000;
+  box-shadow: 1px 1px 3px #000;
+}
+
+.close:hover { background: #00d9ff; }
