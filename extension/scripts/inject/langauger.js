@@ -486,14 +486,19 @@ Langauger.mcqQuiz = function(word, language, options) {
 
 $('body').on('click', '#submitMCQQuiz', function(){
     console.log('submit clicked');
-    var optionSelected = $("#Langauger-mcq-box input[type='radio']:checked").val();
+    var optionSelected = $("#Langauger-mcq-box input[type='radio']:checked").val();    
     if(optionSelected == 1) {
         $("#mcqCorrectAnswer").show();
         $("#mcqWrongAnswer").hide();
+        var word = $("#Langauger-mcq-box input[type='radio']:checked").next().text();
+        chrome.storage.sync.get(['loggedInUserID'], function(data) {
+            chrome.runtime.sendMessage({msgId: "updateMastery", id: data.loggedInUserID, word: word});
+        });
     } else {
         $("#mcqWrongAnswer").show();
         $("#mcqCorrectAnswer").hide();
     }
+    $('#submitMCQQuiz').hide();
 });
 
 $('body').on('click', '#closeMCQQuiz', function(){

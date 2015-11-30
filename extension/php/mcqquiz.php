@@ -6,8 +6,9 @@ if(isset($_GET['jsonString'])){
 	$content = $_GET['jsonString'];
 	$json = json_decode($content, false);	
 	$id = $json->{'id'};
+	$language = $json->{'language'};
 
-	$query = "SELECT * FROM words where userid=".$id." ORDER BY RAND() LIMIT 1";
+	$query = "SELECT * FROM words where userid=".$id." and language='".$language."' ORDER BY RAND() LIMIT 1";
 	$query_run = mysqli_query($link, $query);
 	$return_array = [];
 	if($query_run){

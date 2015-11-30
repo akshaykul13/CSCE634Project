@@ -179,6 +179,7 @@ function mcqQuiz(tabId) {
         if(data.languagerEnabled && data.mcqQuizEnabled) {
             var object = new Object();            
             object.id = data.loggedInUserID;
+            object.language = getLanguageCode(data.langaugerTargetLang);
             var jsonString = JSON.stringify(object);
             $.ajax({
                 type: 'GET',     
@@ -216,6 +217,29 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             type: 'POST',     
             data: 'jsonString='+jsonString, 
             url: 'http://localhost/CSCE634Project/extension/php/saveword.php',     
+            success: function(JSONObject) {     
+                console.log(JSONObject);              
+            }
+        });   
+    });    
+});
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    // flag to designate type of message
+    if (request.msgId != 'updateMastery') {
+        return;
+    }
+    console.log("Updating Mastery");
+    chrome.storage.sync.get(['langaugerTargetLang'], function(data) {
+        var object = new Object();            
+        object.id = request.id;
+        object.word = request.word;        
+        object.language = getLanguageCode(data.langaugerTargetLang);
+        var jsonString = JSON.stringify(object);
+        $.ajax({
+            type: 'POST',     
+            data: 'jsonString='+jsonString, 
+            url: 'http://localhost/CSCE634Project/extension/php/updatemastery.php',     
             success: function(JSONObject) {     
                 console.log(JSONObject);              
             }
