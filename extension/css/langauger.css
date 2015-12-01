@@ -101,7 +101,7 @@ label {
 
 /* hide input */
 .langaugerRadio:empty {
-  margin-left: -999px;
+  margin-left: -1999px;
 }
 
 /* style label */
