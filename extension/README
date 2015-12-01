@@ -1,0 +1,11 @@
+1. Download CSCE634Project-master.zip from https://github.com/akshaykul13/CSCE634Project
+2. Open files background.js and popup.js, change the host from localhost to AWS host.
+   Comment line 4 and uncomment line 5 in background.js
+   Comment line 3 and uncomment line 4 in popup.js
+3. Load the unpacked extension from chrome://extensions
+4. Open the Langauger popup and login using asd/qwe
+5. This should login and show the preferences in the popup.
+6. Enable langauger in the preferences if disabled.
+
+
+Note: The extension won't work in pages such as chrome://extensions and new tab
