@@ -101,6 +101,7 @@ $(document).ready(function() {
                 }else{
                     chrome.storage.sync.set({'loggedInUserID': JSON.parse(JSONObject)[0].id});       
                     $('#preferencesWidget').show();
+                    $("#preferencesWidget").find(".username").text("Welcome Back, "+JSON.parse(JSONObject)[0].firstname )
                     $('#loginWidget').hide();
                 }
             }
