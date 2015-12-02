@@ -527,7 +527,7 @@ Langauger.contextualSentences = function(sentences, targetLang) {
     }
     innerDiv = innerDiv + '</ol>';    
     innerDiv = innerDiv + '<a id="closeContextualSentencesButton" class="close">X</a>';
-    var el = jQuery('<div id="Langauger-contextual-box" class="Langauger-box" style="width:300px">').html(innerDiv);
+    var el = jQuery('<div class="Langauger-box Langauger-contextual-box" style="width:300px">').html(innerDiv);
     var x = $('body').width() - 325;
     var y = 25;
     x = x + jQuery(document).scrollLeft();
@@ -536,7 +536,7 @@ Langauger.contextualSentences = function(sentences, targetLang) {
 }
 
 $('body').on('click', '#closeContextualSentencesButton', function(){
-    $('#Langauger-contextual-box').hide();
+    $('.Langauger-contextual-box').hide();
 });
 
 
