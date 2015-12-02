@@ -6,6 +6,7 @@ $(document).ready(function() {
     $('#preferencesWidget').hide();
     $('#loginWidget').hide();            
     $('#signupMessage').hide();
+    $('#getAllWordsButton').addClass('disabled');
 
     // Initialize the options
     chrome.storage.sync.get(['loggedInUserID', 'languagerEnabled', 'langaugerTargetLang', 'wordReplacementEnabled', 'wordReplacementQuizLevel', 'mcqQuizEnabled', 'mcqQuizFrequency'], function(data) {
@@ -46,13 +47,60 @@ $(document).ready(function() {
             url: host+'/CSCE634Project/extension/php/getrecentwords.php',     
             success: function(JSONObject) {     
                 var recentWords = JSON.parse(JSONObject);   
-                var html = '<tbody>';
+                var html = '<thead><tr><th>Word</th><th>Language</th><th>Translation</th><th>Mastery</th></tr></thead><tbody>';
                 for(i = 0; i < recentWords.length; i++) {
                     var translation = translateString(recentWords[i].word, 'en', recentWords[i].language);
                     var row = '<tr><td>'+recentWords[i].word+'</td><td>'+codeToLanguage(recentWords[i].language)+'</td><td>'+translation+'</td><td><div class="progress" style="margin-bottom:0px;"><div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="'+recentWords[i].mastery+'" aria-valuemin="0" aria-valuemax="100" style="width: '+recentWords[i].mastery+'%;">'+recentWords[i].mastery+'%</div></div></td></tr>';
                     html = html + row;              
                 }
                 html = html + '</tbody>';
+                $('.tablesorter-blackice').empty();
+                $('.tablesorter-blackice').append(html);
+            }
+        });
+    }
+
+    $('#getAllWordsButton').click(function() {
+        if (!$(this).hasClass('disabled')) {
+            return false;
+        }
+        chrome.storage.sync.get(['loggedInUserID'], function(data) {
+            fetchAllWords(data.loggedInUserID);
+            $('#getRecentWordsButton').addClass('disabled');            
+            $('#getAllWordsButton').removeClass('disabled');
+        });
+    });
+
+    $('#getRecentWordsButton').click(function() {
+        if (!$(this).hasClass('disabled')) {
+            return false;
+        }
+        chrome.storage.sync.get(['loggedInUserID'], function(data) {
+            updateRecentWords(data.loggedInUserID);
+            $('#getRecentWordsButton').removeClass('disabled');            
+            $('#getAllWordsButton').addClass('disabled');            
+        });
+    });
+
+    function fetchAllWords(id) {
+        var object = new Object();            
+        object.id = id;
+        console.log(object);
+        var jsonString = JSON.stringify(object);
+        $.ajax({
+            type: 'GET',     
+            data: 'jsonString='+jsonString, 
+            url: host+'/CSCE634Project/extension/php/getallwords.php',     
+            success: function(JSONObject) {     
+                var recentWords = JSON.parse(JSONObject);   
+                var html = '<thead><tr><th>Word</th><th>Language</th><th>Translation</th><th>Mastery</th></tr></thead><tbody>';
+                for(i = 0; i < recentWords.length; i++) {
+                    var translation = translateString(recentWords[i].word, 'en', recentWords[i].language);
+                    var row = '<tr><td>'+recentWords[i].word+'</td><td>'+codeToLanguage(recentWords[i].language)+'</td><td>'+translation+'</td><td><div class="progress" style="margin-bottom:0px;"><div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="'+recentWords[i].mastery+'" aria-valuemin="0" aria-valuemax="100" style="width: '+recentWords[i].mastery+'%;">'+recentWords[i].mastery+'%</div></div></td></tr>';
+                    html = html + row;              
+                }
+                html = html + '</tbody>';
+                $('.tablesorter-blackice').empty();
                 $('.tablesorter-blackice').append(html);
             }
         });

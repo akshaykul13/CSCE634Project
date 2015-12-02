@@ -93,3 +93,13 @@ body {
    border-top-color: #1b435e;
    background: #1b435e;
    }
+
+.overflow-table {
+    overflow-y:scroll;
+    height:175px;
+    display:block;
+}
+
+.disabled, .disabled:hover {
+  color: grey;
+}

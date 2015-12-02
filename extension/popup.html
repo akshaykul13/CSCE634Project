@@ -128,19 +128,16 @@
                         </select>
                     </div>
                 </div>
-            </fieldset>            
-            <button type="button" class="logout" id="logoutButton">Logout</button>
-            <table class="tablesorter-blackice">
-                <thead>
-                    <tr>
-                        <th>Word</th>
-                        <th>Language</th>
-                        <th>Translation</th>
-                        <th>Mastery</th>                    
-                    </tr>
-                </thead>            
-            </table> 
+            </fieldset>                        
+            <div style="font-size:12px;text-align:center;padding:5px;margin-top:20px;">
+                <a style="padding-left:10px;cursor:pointer;" id="getAllWordsButton">Display all words</a>
+                <a style="padding-left:10px;cursor:pointer;" id="getRecentWordsButton">Display recent words</a>
+            </div>
+            <div class="overflow-table">                
+                <table class="tablesorter-blackice" style="table-layout:fixed;"></table> 
+            </div>            
         </form>       
+        <button type="button" class="logout" id="logoutButton">Logout</button>
     </body>
 </html>
 
