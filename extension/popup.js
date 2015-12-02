@@ -5,6 +5,7 @@ $(document).ready(function() {
     var defaultTargetLang = "Spanish";
     $('#preferencesWidget').hide();
     $('#loginWidget').hide();            
+    $('#signupMessage').hide();
 
     // Initialize the options
     chrome.storage.sync.get(['loggedInUserID', 'languagerEnabled', 'langaugerTargetLang', 'wordReplacementEnabled', 'wordReplacementQuizLevel', 'mcqQuizEnabled', 'mcqQuizFrequency'], function(data) {
@@ -78,6 +79,7 @@ $(document).ready(function() {
             url: host+'/CSCE634Project/extension/php/register.php',      
             success: function(data) {     
                 console.log(data);
+                $('#signupMessage').show();
             }
         });
     });
@@ -134,6 +136,7 @@ $(document).ready(function() {
 
     $('.tab a').on('click', function(e) {
         e.preventDefault();
+        $('#signupMessage').hide();
         $(this).parent().addClass('active');
         $(this).parent().siblings().removeClass('active');
         target = $(this).attr('href');
