@@ -48,13 +48,38 @@ $(document).ready(function() {
                 var recentWords = JSON.parse(JSONObject);   
                 var html = '<tbody>';
                 for(i = 0; i < recentWords.length; i++) {
-                    var row = '<tr><td>'+recentWords[i].word+'</td><td>'+recentWords[i].language+'</td><td><div class="progress" style="margin-bottom:0px;"><div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="'+recentWords[i].mastery+'" aria-valuemin="0" aria-valuemax="100" style="width: '+recentWords[i].mastery+'%;">'+recentWords[i].mastery+'%</div></div></td></tr>';
+                    var translation = translateString(recentWords[i].word, 'en', recentWords[i].language);
+                    var row = '<tr><td>'+recentWords[i].word+'</td><td>'+codeToLanguage(recentWords[i].language)+'</td><td>'+translation+'</td><td><div class="progress" style="margin-bottom:0px;"><div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="'+recentWords[i].mastery+'" aria-valuemin="0" aria-valuemax="100" style="width: '+recentWords[i].mastery+'%;">'+recentWords[i].mastery+'%</div></div></td></tr>';
                     html = html + row;              
                 }
                 html = html + '</tbody>';
                 $('.tablesorter-blackice').append(html);
             }
         });
+    }
+
+    function codeToLanguage(code) {
+        var language;
+        switch(code) {
+            case 'zh':
+                language = 'Chinese';
+                break;
+            case 'fr':
+                language = 'French';
+                break;
+            case 'de':
+                language = 'German';
+                break;
+            case 'ru':
+                language = 'Russian';
+                break;
+            case 'es':
+                language = 'Spanish';
+                break;
+            default:
+                language = 'Spanish';
+        }
+        return language;
     }
     
     ////////////////////////////////////////////////////////////////////////
@@ -202,4 +227,48 @@ $(document).ready(function() {
         $('#preferencesWidget').hide();
         $('#loginWidget').show();
     });
+
+    function translateString(sourceText, sourceLang, destLang) {    
+        var translation;
+        jQuery.ajax({
+            url:'https://translate.google.com/translate_a/single',
+            type: 'GET',
+            dataType: 'json',
+            async: false,
+            success: function(response){    
+                console.log(response);        
+                if (response && response.sentences && response.sentences.length > 0) {
+                    var ret = [];
+                    var expandRet = [];
+                    for (var i = 0; i < response.sentences.length; i++) {
+                        ret.push(response.sentences[i].trans);
+                    }
+                    ret = ret.join(" ");                
+                    translation =  ret;
+                }
+
+                // Google Translate reports 200 in case of error messages
+                if (response.error){
+                    console.log(response);
+                }            
+            },
+            error: function(xhr, status){
+                Langauger.config.errorCallback("Google Translate XHR error: <br/>"  + status);
+            },
+            data: {
+                // appear as the official Google Translate chrome extension
+                client:'gtx',
+                hl:'en-US',
+                source:'bubble',
+                tk: (Math.floor((new Date).getTime() / 36E5) ^ 123456) + "|" + (Math.floor((Math.sqrt(5) - 1) / 2 * ((Math.floor((new Date).getTime() / 36E5) ^ 123456) ^ 654321) % 1 * 1048576)),
+                dt: 'bd',
+                dt: 't',
+                dj: 1,
+                sl: sourceLang,
+                tl: destLang,
+                q: sourceText
+            }
+        });    
+        return translation;
+    }
 });
