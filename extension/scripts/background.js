@@ -48,7 +48,9 @@ ChromeLangauger.activate = function(tab) {
             chrome.storage.sync.get(['languagerEnabled', 'langaugerTargetLang'], function(data) {
                 if(data.languagerEnabled) {
                     ChromeLangauger.setBadge(tab.id, data.langaugerTargetLang.substring(0,2));
-                }
+                } else {
+                    ChromeLangauger.removeBadge(currentTabID);
+                }            
             });
 
             var files = ["scripts/inject/jquery.min.js", "scripts/inject/rangy-core.js", "scripts/inject/parser.js", "scripts/inject/langauger.js"];
