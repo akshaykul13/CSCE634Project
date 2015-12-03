@@ -256,6 +256,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         return;
     }
     console.log("Getting Contextual Sentences");    
+    chrome.tabs.query(
+        {currentWindow: true, active : true},
+        function(tabArray){
+            currentTabID = currentTabID || tabArray[0].id;
+        }
+    );  
     chrome.storage.sync.get(['langaugerTargetLang'], function(data) {
         var object = new Object();                    
         object.word = request.word;        

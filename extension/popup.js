@@ -178,6 +178,7 @@ $(document).ready(function() {
                     $('#preferencesWidget').show();
                     $("#preferencesWidget").find(".username").text("Welcome Back, "+JSON.parse(JSONObject)[0].firstname )
                     $('#loginWidget').hide();
+                    updateRecentWords(JSON.parse(JSONObject)[0].id);
                 }
             }
         });
@@ -274,6 +275,8 @@ $(document).ready(function() {
         chrome.storage.sync.set({'loggedInUserID': -1});       
         $('#preferencesWidget').hide();
         $('#loginWidget').show();
+        $('#login_emailid').val('');        
+        $('#login_password').val('');
     });
 
     function translateString(sourceText, sourceLang, destLang) {    
